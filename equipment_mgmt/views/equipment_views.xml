@@ -31,6 +31,15 @@
                            statusbar_visible="available,assigned"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_assignments"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-history">
+                            <field name="assignment_count" widget="statinfo"
+                                   string="Assignments"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1><field name="name" placeholder="e.g. Dell XPS 15"/></h1>
                     </div>

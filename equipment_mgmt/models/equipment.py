@@ -71,3 +71,15 @@ class Equipment(models.Model):
         counts = {g['equipment_id'][0]: g['equipment_id_count'] for g in groups}
         for rec in self:
             rec.assignment_count = counts.get(rec.id, 0)
+
+    # --- Actions ---
+    def action_view_assignments(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Assignments',
+            'res_model': 'equipment.assignment',
+            'view_mode': 'tree,form',
+            'domain': [('equipment_id', '=', self.id)],
+            'context': {'default_equipment_id': self.id},
+        }
