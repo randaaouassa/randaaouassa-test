@@ -35,6 +35,7 @@ class Equipment(models.Model):
 
     # --- SQL ---
     def init(self):
+        """Enforce unique reference (ignoring empty values) at DB level."""
         self.env.cr.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS unique_equipment_reference
             ON equipment_equipment (reference)
@@ -43,6 +44,7 @@ class Equipment(models.Model):
 
     # --- ORM overrides ---
     def name_get(self):
+        """Display equipment as [REF] Name in dropdowns and links."""
         result = []
         for rec in self:
             label = f"[{rec.reference}] {rec.name}" if rec.reference else rec.name
@@ -52,6 +54,7 @@ class Equipment(models.Model):
     # --- Computes ---
     @api.depends('assignment_ids.state')
     def _compute_current_assignment(self):
+        """Find the active assignment for each equipment in one query."""
         Assignment = self.env['equipment.assignment']
         active = Assignment.search([
             ('equipment_id', 'in', self.ids),
@@ -63,6 +66,7 @@ class Equipment(models.Model):
 
     @api.depends('assignment_ids')
     def _compute_assignment_count(self):
+        """Count assignments per equipment using a single grouped query."""
         groups = self.env['equipment.assignment'].read_group(
             [('equipment_id', 'in', self.ids)],
             ['equipment_id'],
@@ -74,6 +78,7 @@ class Equipment(models.Model):
 
     # --- Actions ---
     def action_view_assignments(self):
+        """Open the filtered assignment list for this equipment."""
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',

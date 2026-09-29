@@ -36,6 +36,7 @@ class Assignment(models.Model):
 
     # --- SQL ---
     def init(self):
+        """Enforce one active assignment per equipment at DB level."""
         self.env.cr.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS unique_active_per_equipment
             ON equipment_assignment (equipment_id)
@@ -45,11 +46,13 @@ class Assignment(models.Model):
     # --- ORM overrides ---
     @api.model_create_multi
     def create(self, vals_list):
+        """Create assignments and sync the equipment state."""
         records = super().create(vals_list)
         records._sync_equipment_state()
         return records
 
     def write(self, vals):
+        """Sync equipment state when the assignment changes."""
         res = super().write(vals)
         if 'state' in vals or 'equipment_id' in vals:
             self._sync_equipment_state()
@@ -58,6 +61,7 @@ class Assignment(models.Model):
     # --- Constraints ---
     @api.constrains('equipment_id', 'state')
     def _check_single_active(self):
+        """Reject a second active assignment on the same equipment."""
         for rec in self:
             if rec.state != 'active':
                 continue
@@ -83,6 +87,7 @@ class Assignment(models.Model):
 
     # --- Helpers ---
     def _sync_equipment_state(self):
+        """Flip equipment state to assigned/available based on active assignments."""
         for equipment in self.mapped('equipment_id'):
             has_active = bool(equipment.assignment_ids.filtered(
                 lambda a: a.state == 'active'
