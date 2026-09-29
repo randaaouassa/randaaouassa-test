@@ -6,11 +6,12 @@ class Equipment(models.Model):
     _name = 'equipment.equipment'
     _description = 'Company Equipment'
     _order = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # --- Basic info ---
-    name = fields.Char(required=True, index=True)
-    reference = fields.Char(index=True)
-    category_id = fields.Many2one('equipment.category', index=True)
+    name = fields.Char(required=True, index=True, tracking=True)
+    reference = fields.Char(index=True, copy=False, tracking=True)
+    category_id = fields.Many2one('equipment.category', index=True, tracking=True)
 
     # --- Lifecycle ---
     state = fields.Selection([
@@ -18,7 +19,9 @@ class Equipment(models.Model):
         ('assigned', 'Assigned'),
         ('maintenance', 'Maintenance'),
         ('retired', 'Retired'),
-    ], default='available', required=True, index=True)
+    ], default='available', required=True, index=True, tracking=True)
+
+    active = fields.Boolean(default=True)
 
     # --- Relations ---
     current_assignment_id = fields.Many2one(
@@ -38,13 +41,25 @@ class Equipment(models.Model):
             WHERE reference IS NOT NULL AND reference != '';
         """)
 
+    # --- ORM overrides ---
+    def name_get(self):
+        result = []
+        for rec in self:
+            label = f"[{rec.reference}] {rec.name}" if rec.reference else rec.name
+            result.append((rec.id, label))
+        return result
+
     # --- Computes ---
     @api.depends('assignment_ids.state')
     def _compute_current_assignment(self):
+        Assignment = self.env['equipment.assignment']
+        active = Assignment.search([
+            ('equipment_id', 'in', self.ids),
+            ('state', '=', 'active'),
+        ])
+        by_equipment = {a.equipment_id.id: a for a in active}
         for rec in self:
-            rec.current_assignment_id = rec.assignment_ids.filtered(
-                lambda a: a.state == 'active'
-            )[:1]
+            rec.current_assignment_id = by_equipment.get(rec.id)
 
     @api.depends('assignment_ids')
     def _compute_assignment_count(self):

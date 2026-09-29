@@ -81,6 +81,10 @@ Requirements were intentionally open-ended. Assumptions taken:
 5. reference = asset tag / serial — uniqueness enforced when provided.
 6. Employees are reused from hr.employee — no parallel table.
 
+## Scope Notes
+
+Out of scope for this exercise: record rules per team, barcode scanning, reporting views. These are natural next steps once the core workflow is validated.
+
 ## Install
 
 ```bash
@@ -92,13 +96,15 @@ docker run -d -p 8069:8069 --name odoo --link db:db \
 
 Then in Odoo: Apps → Update Apps List → Equipment Management → Install.
 
-## Roadmap / Known Gaps
+## Future Enhancements
 
-- [ ] Record rules (per-team scoping) if needed
-- [ ] Barcode / QR scanning for asset tags
-- [ ] Reporting views (usage per employee, per category)
-- [ ] Automated tests at volume (10k+ rows)
-- [ ] Chatter / audit trail on equipment
+Natural next steps once the core workflow is validated:
+
+- QR / barcode badge per equipment — scan to assign or return
+- Storage location tracking (rack, shelf, bin)
+- Email notifications on assignment and return
+- Chatter audit trail on equipment
+- Dashboard: usage rate, idle items, per-employee view
 
 ## License
 

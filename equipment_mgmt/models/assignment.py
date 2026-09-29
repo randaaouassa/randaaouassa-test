@@ -7,6 +7,7 @@ class Assignment(models.Model):
     _name = 'equipment.assignment'
     _description = 'Equipment Assignment'
     _order = 'date_start desc'
+    _rec_name = 'equipment_id'
 
     # --- Relations ---
     equipment_id = fields.Many2one(

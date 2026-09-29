@@ -13,4 +13,9 @@
         <field name="implied_ids" eval="[(4, ref('group_equipment_user'))]"/>
     </record>
 
+    <!-- Admin auto-assign -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_equipment_manager'))]"/>
+    </record>
+
 </odoo>
