@@ -16,7 +16,23 @@ This module replaces that with a native Odoo workflow.
 
 ## Screenshots
 
-> Coming soon — list, form, kanban, and graph views.
+### Module Overview
+![Overview](docs/screenshots/the_equipment_management_odoo_module.png)
+
+### Equipment List — Filters
+![Equipments Filters](docs/screenshots/filters_in_equipments.png)
+
+### Available Equipment
+![Available](docs/screenshots/available_equipments.png)
+
+### Assignments — Filters
+![Assignments Filters](docs/screenshots/filters_in_assignments.png)
+
+### Assignments
+![Assignments](docs/screenshots/assignments.png)
+
+### Categories
+![Categories](docs/screenshots/categories.png)
 
 ## Features
 
@@ -133,6 +149,16 @@ docker run -d -p 8069:8069 --name odoo --link db:db \
 ```
 
 Then in Odoo: Apps → Update Apps List → Equipment Management → Install.
+
+## Demo Data
+
+To populate the database with demo data for exploration or screenshots:
+
+```bash
+MSYS_NO_PATHCONV=1 docker exec -i odoo odoo shell -d equipment \
+  --db_host=db --db_user=odoo --db_password=odoo \
+  < equipment_mgmt/scripts/seed_demo.py
+```
 
 ## License
 
