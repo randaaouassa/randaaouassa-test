@@ -14,6 +14,10 @@ The company tracked equipment (laptops, phones, tools) in spreadsheets and email
 
 This module replaces that with a native Odoo workflow.
 
+## Screenshots
+
+> Coming soon — list, form, kanban, and graph views.
+
 ## Features
 
 - Register company equipment with category, reference, state
@@ -22,6 +26,17 @@ This module replaces that with a native Odoo workflow.
 - Fast filtering, grouping, and kanban status
 - Full assignment history per item
 - Role-based access (User / Manager)
+
+## Architecture
+
+```
+hr.employee ──┐
+              ├──> equipment.assignment ──> equipment.equipment ──> equipment.category
+```
+
+- `equipment.assignment` links an employee to an item with dates and status
+- `equipment.equipment.current_assignment_id` is a stored pointer to the active assignment for instant lookups
+- `equipment.category` is a lightweight lookup table for filtering and grouping
 
 ## Data Model
 
@@ -57,6 +72,7 @@ Why a table? Users can add new categories on the fly, and Odoo gives group-by/fi
 
 - User = operational staff handing out equipment
 - Manager = supervisor, inherits User rights
+- Admin is auto-assigned to Manager on install
 
 ## Performance Considerations
 
@@ -69,6 +85,18 @@ Designed for tens of thousands of equipment items and continuous history growth.
 - read_group used for counting — one query per page, not N
 - History kept in a separate table so equipment stays lean as data grows
 - No heavy loops on load — computes are either stored or use aggregated queries
+
+## Performance Benchmarks
+
+Tested with 10,000 equipment records on a local Docker Odoo 17 + Postgres 15:
+
+| Operation | Time |
+|-----------|------|
+| Bulk create 10k equipment | 4.82 s |
+| List read (80 rows) | 1.6 ms |
+| Filtered read by state | 2.5 ms |
+
+Query plans use the indexes on state, reference, and the partial unique index on reference. The denormalized current_assignment_id avoids JOINs when displaying "who has it now".
 
 ## Assumptions
 
@@ -85,6 +113,16 @@ Requirements were intentionally open-ended. Assumptions taken:
 
 Out of scope for this exercise: record rules per team, barcode scanning, reporting views. These are natural next steps once the core workflow is validated.
 
+## Future Enhancements
+
+Natural next steps once the core workflow is validated:
+
+- QR / barcode badge per equipment — scan to assign or return
+- Storage location tracking (rack, shelf, bin)
+- Email notifications on assignment and return
+- Chatter audit trail on equipment
+- Dashboard: usage rate, idle items, per-employee view
+
 ## Install
 
 ```bash
@@ -95,29 +133,6 @@ docker run -d -p 8069:8069 --name odoo --link db:db \
 ```
 
 Then in Odoo: Apps → Update Apps List → Equipment Management → Install.
-
-## Performance Benchmarks
-
-Tested with 10,000 equipment records on a local Docker Odoo 17 + Postgres 15:
-
-| Operation | Time |
-|-----------|------|
-| Bulk create 10k equipment | 4.82 s |
-| List read (80 rows) | 1.6 ms |
-| Filtered read by state | 2.5 ms |
-
-Query plans use the indexes on `state`, `reference`, and the partial unique index on `reference`. 
-The denormalized `current_assignment_id` avoids JOINs when displaying "who has it now".
-
-## Future Enhancements
-
-Natural next steps once the core workflow is validated:
-
-- QR / barcode badge per equipment — scan to assign or return
-- Storage location tracking (rack, shelf, bin)
-- Email notifications on assignment and return
-- Chatter audit trail on equipment
-- Dashboard: usage rate, idle items, per-employee view
 
 ## License
 
