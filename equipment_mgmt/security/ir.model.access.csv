@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_equipment_user,equipment.equipment.user,model_equipment_equipment,group_equipment_user,1,1,1,0
+access_equipment_manager,equipment.equipment.manager,model_equipment_equipment,group_equipment_manager,1,1,1,1
+access_assignment_user,equipment.assignment.user,model_equipment_assignment,group_equipment_user,1,1,1,0
+access_assignment_manager,equipment.assignment.manager,model_equipment_assignment,group_equipment_manager,1,1,1,1
+access_category_user,equipment.category.user,model_equipment_category,group_equipment_user,1,0,1,0
+access_category_manager,equipment.category.manager,model_equipment_category,group_equipment_manager,1,1,1,1

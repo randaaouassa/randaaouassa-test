@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Groups -->
+    <record id="group_equipment_user" model="res.groups">
+        <field name="name">Equipment / User</field>
+        <field name="category_id" ref="base.module_category_operations"/>
+    </record>
+
+    <record id="group_equipment_manager" model="res.groups">
+        <field name="name">Equipment / Manager</field>
+        <field name="category_id" ref="base.module_category_operations"/>
+        <field name="implied_ids" eval="[(4, ref('group_equipment_user'))]"/>
+    </record>
+
+</odoo>
