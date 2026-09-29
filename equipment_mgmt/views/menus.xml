@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu -->
+    <menuitem id="menu_equipment_root"
+              name="Equipment"
+              web_icon="equipment_mgmt,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Operations -->
+    <menuitem id="menu_equipment"
+              name="Equipment"
+              parent="menu_equipment_root"
+              action="action_equipment"
+              sequence="10"/>
+
+    <menuitem id="menu_assignments"
+              name="Assignments"
+              parent="menu_equipment_root"
+              action="action_assignment"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_configuration"
+              name="Configuration"
+              parent="menu_equipment_root"
+              sequence="100"/>
+
+    <menuitem id="menu_categories"
+              name="Categories"
+              parent="menu_configuration"
+              action="action_category"
+              sequence="10"/>
+
+</odoo>

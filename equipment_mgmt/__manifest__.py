@@ -7,6 +7,10 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'views/equipment_views.xml',
+        'views/assignment_views.xml',
+        'views/category_views.xml',
+        'views/menus.xml',
     ],
     'installable': True,
     'application': True,

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Equipment tree view -->
+    <record id="view_equipment_tree" model="ir.ui.view">
+        <field name="name">equipment.equipment.tree</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="category_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'available'"
+                       decoration-info="state == 'assigned'"
+                       decoration-warning="state == 'maintenance'"
+                       decoration-muted="state == 'retired'"/>
+                <field name="current_assignment_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Equipment form view -->
+    <record id="view_equipment_form" model="ir.ui.view">
+        <field name="name">equipment.equipment.form</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="available,assigned"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Dell XPS 15"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="reference"/>
+                            <field name="category_id"/>
+                        </group>
+                        <group>
+                            <field name="current_assignment_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Equipment kanban view -->
+    <record id="view_equipment_kanban" model="ir.ui.view">
+        <field name="name">equipment.equipment.kanban</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_title">
+                                <strong><field name="name"/></strong>
+                            </div>
+                            <div>
+                                <field name="reference"/>
+                            </div>
+                            <div>
+                                <field name="category_id"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Equipment search view -->
+    <record id="view_equipment_search" model="ir.ui.view">
+        <field name="name">equipment.equipment.search</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="category_id"/>
+                <field name="current_assignment_id"/>
+
+                <filter name="filter_available" string="Available"
+                        domain="[('state', '=', 'available')]"/>
+                <filter name="filter_assigned" string="Assigned"
+                        domain="[('state', '=', 'assigned')]"/>
+                <filter name="filter_maintenance" string="Maintenance"
+                        domain="[('state', '=', 'maintenance')]"/>
+                <filter name="filter_retired" string="Retired"
+                        domain="[('state', '=', 'retired')]"/>
+                <separator/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_category" string="Category"
+                            context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Equipment graph view -->
+    <record id="view_equipment_graph" model="ir.ui.view">
+        <field name="name">equipment.equipment.graph</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="state"/>
+                <field name="category_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Equipment pivot view -->
+    <record id="view_equipment_pivot" model="ir.ui.view">
+        <field name="name">equipment.equipment.pivot</field>
+        <field name="model">equipment.equipment</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="category_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Equipment action -->
+    <record id="action_equipment" model="ir.actions.act_window">
+        <field name="name">Equipment</field>
+        <field name="res_model">equipment.equipment</field>
+        <field name="view_mode">kanban,tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_equipment_search"/>
+    </record>
+
+</odoo>

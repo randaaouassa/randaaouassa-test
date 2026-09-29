@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Assignment tree view -->
+    <record id="view_assignment_tree" model="ir.ui.view">
+        <field name="name">equipment.assignment.tree</field>
+        <field name="model">equipment.assignment</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="equipment_id"/>
+                <field name="employee_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'active'"
+                       decoration-muted="state == 'returned'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Assignment form view -->
+    <record id="view_assignment_form" model="ir.ui.view">
+        <field name="name">equipment.assignment.form</field>
+        <field name="model">equipment.assignment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_return" type="object"
+                            string="Return" class="btn-primary"
+                            invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="active,returned"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="equipment_id"/>
+                            <field name="employee_id"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Assignment search view -->
+    <record id="view_assignment_search" model="ir.ui.view">
+        <field name="name">equipment.assignment.search</field>
+        <field name="model">equipment.assignment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="equipment_id"/>
+                <field name="employee_id"/>
+
+                <filter name="filter_active" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_returned" string="Returned"
+                        domain="[('state', '=', 'returned')]"/>
+                <separator/>
+                <filter name="filter_current_month" string="Current Month"
+                        domain="[('date_start', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_employee" string="Employee"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_equipment" string="Equipment"
+                            context="{'group_by': 'equipment_id'}"/>
+                    <filter name="group_date" string="Start Date"
+                            context="{'group_by': 'date_start:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Assignment graph view -->
+    <record id="view_assignment_graph" model="ir.ui.view">
+        <field name="name">equipment.assignment.graph</field>
+        <field name="model">equipment.assignment</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="employee_id"/>
+                <field name="date_start" interval="month"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Assignment pivot view -->
+    <record id="view_assignment_pivot" model="ir.ui.view">
+        <field name="name">equipment.assignment.pivot</field>
+        <field name="model">equipment.assignment</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="employee_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Assignment action -->
+    <record id="action_assignment" model="ir.actions.act_window">
+        <field name="name">Assignments</field>
+        <field name="res_model">equipment.assignment</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_assignment_search"/>
+    </record>
+
+</odoo>
